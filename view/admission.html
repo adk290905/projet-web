@@ -1,0 +1,52 @@
+<?php
+	$menu='<ul>';
+	$menu.='<li>scolarité</li>';
+	$menu.='<li>examen</li>';
+	$menu.='<li id="current">admission</li>';
+	$menu.='<li><a href="index.php?controller=parametre">parametres</a></li>';
+	$menu.='<li>deconnexion</li>';
+	$menu.='</ul>';
+	ob_start();
+?>
+<h2>Admission</h2>
+<form method="POST" action="index.php?controller=admission">
+	<input type="date" name="date"><br />
+	<input type="text" name="nom" placeholder="Name" /><br />
+	<select name="degree">
+		<option selected disabled value="">degree</option>
+		<?php 
+			while($dt=$rq1->fetch()){
+				echo '<option value="'.$dt['id_degree'].'">'.$dt['lib_degree'].'</option>';
+			}
+		?>
+	</select>
+	<select name="sector">
+		<option selected disabled value="">sector</option>
+		<?php 
+			while($dt=$rq2->fetch()){
+				echo '<option value="'.$dt['id_sector'].'">'.$dt['lib_sector'].'</option>';
+			}
+		?>
+	</select><br />
+	<input type="submit" name="btn" value="Add" />
+</form>	
+<?php
+	echo '<h2>Liste des Admission</h2>';
+	echo '<table border="1" width="1000">';
+	if($req->rowCount() != 0){
+		echo '<th>Nom</th><th>Diplome</th><th>Date</th><th>Filière</th></tr>';
+		while($row=$req->fecth()){
+		echo '<tr>';
+		echo '<td>modifier</td>';
+		echo '<td>supprimer</td>';
+		echo '<td>'.$row['name_admission'].'</td><td>'.$row['lib_degree'].'</td><td>'.$row['date_admission'].'</td><td>'.$row['lib_sector'].'</td>';
+		echo '</tr>';
+		}
+	}else{
+		echo '<tr><td height="50">Aucune admission disponible</td></tr>';
+	}
+	echo '</table>';
+	$content=ob_get_clean();
+	require 'template.html';
+?>
+	

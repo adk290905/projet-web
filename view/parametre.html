@@ -1,0 +1,61 @@
+<?php
+	$menu='<ul>';
+	$menu.='<li>scolarité</li>';
+	$menu.='<li>examen</li>';
+	$menu.='<li><a href="index.php?controller=admission">admission</a></li>';
+	$menu.='<li id="current">parametres</li>';
+	$menu.='<li>deconnexion</li>';
+	$menu.='</ul>';
+	ob_start();
+?>
+<h2>Paramètres</h2>
+<ul>
+	<li>lien1</li>
+	<li>lien2</li>
+	<li>lien3</li>
+</ul>
+<form method="POST" action="index.php?controller=parametre" >
+	<input type = "hidden" name = "key" value = "<?=$id ?>" /> 
+	<input type="text" name="lib" placeholder="libellé" value="<?=$lib ?>" />
+	<select name="parametre">
+		<?php
+			$op = (isset($_GET['task']) && $_GET['task'] =='Modif')? '<option selected>'.$_GET['table'].'</option>' : '<option value="" selected disabled>Parametres</option>';
+			echo $op;
+		?>
+		<option>degree</option>
+		<option>course</option>
+		<option>profil</option>
+	</select><br/>
+	<input type="submit" name="btn" value="add"/> 
+	<input type="submit" name="btn" value="update"/> 
+ </form>
+
+<?php
+	$list = ['degree', 'course', 'profil'];
+	for($i = 0; $i<sizeof($list); $i++){
+		$table = $list[$i]; $field = '*';
+		$req = read($table, $field);
+		echo '<h2>'.$list[$i].'</h2>';
+		if($req -> rowCount() != 0)
+		{
+			echo '<table border="0" width="1000" cellspacing="1" bgcolor="#ACACAC" cellpadding="10">';
+			$bg = "#EFEFEF";
+			while($dt = $req -> fetch())
+			{
+				echo'<tr>';
+				echo '<td width="32" bgcolor="'.$bg.'" align="center"><a href="index.php?controller=parametre&task=supp&id='.$dt['id_'.$list[$i]].'&table='.$list[$i].'">&cross;</a></td>';
+				echo '<td width="32" bgcolor="'.$bg.'" align="center"><a href="index.php?controller=parametre&task=Modif&table='.$list[$i].'&data='.urlencode(json_encode($dt)).'">Modifier</a></td>';
+				echo '<td bgcolor="'.$bg.'">'.$dt['lib_'.$list[$i]].'</td>';
+				echo '</tr>';
+				$bg=($bg=='#FFFFFF')? '#EFEFEF' : '#FFFFFF';
+			}
+			echo '</table>';
+		}
+	}
+	$content=ob_get_clean();
+	require "template.html";
+?> 
+
+
+
+
